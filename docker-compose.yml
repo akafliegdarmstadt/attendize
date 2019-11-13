@@ -7,15 +7,21 @@ services:
       dockerfile: Dockerfile-nginx
     env_file:
       - ./.env
-    ports:
-    - "8080:80"
-    - "8081:443"
     networks:
       - attendizenet
+      - jupyterhub-production
     volumes:
       - .:/usr/share/nginx/html/attendize
     depends_on:
       - php
+    expose:
+      - 80
+      - 443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:passbolt.akaflieg.tu-darmstadt.de"
+      - "traefik.docker.network=jupyterhub-production"
   php:
     build:
       context: .
@@ -81,9 +87,12 @@ services:
     networks:
       - attendizenet
 
+
 networks:
   attendizenet:
-    driver: bridge
+          #    driver: bridge
+  jupyterhub-production:
+    external: true
 
 volumes:
     mysql-data:
