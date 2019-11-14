@@ -16,11 +16,10 @@ services:
       - php
     expose:
       - 80
-      - 443
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
-      - "traefik.frontend.rule=Host:passbolt.akaflieg.tu-darmstadt.de"
+      - "traefik.frontend.rule=Host:100jahre.akaflieg.tu-darmstadt.de"
       - "traefik.docker.network=jupyterhub-production"
   php:
     build:
@@ -30,7 +29,6 @@ services:
       - ./.env
     depends_on:
       - db
-      - maildev
       - redis
     volumes:
       - .:/usr/share/nginx/html/attendize
@@ -52,7 +50,6 @@ services:
       dockerfile: Dockerfile-php
     depends_on:
       - db
-      - maildev
       - redis
     volumes:
       - .:/usr/share/nginx/html/attendize
@@ -70,18 +67,10 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "3306:3306"
     volumes:
       - "mysql-data:/var/lib/mysql"
     networks:
     - attendizenet
-  maildev:
-    image: djfarrelly/maildev
-    ports:
-      - "1080:80"
-    networks:
-      - attendizenet
   redis:
     image: redis
     networks:
@@ -90,7 +79,6 @@ services:
 
 networks:
   attendizenet:
-          #    driver: bridge
   jupyterhub-production:
     external: true
 
